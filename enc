@@ -1,0 +1,5 @@
+/* Danil Demashov
+const crypto = require('crypto');
+const fs = require('fs');
+let clr = crypto.publicDecrypt(fs.readFileSync('key'), fs.readFileSync('secret'))
+console.log(clr.toString());
