@@ -15,8 +15,8 @@
       <select id="s"></select>
       <span>
         <a target="f" href="https://kodaktor.ru/gossbook_slides/gossbook-03.png"> Содержание</a>
-        <a target="f" href="#" id="prv"> Предыдущая</a>
-        <a id="nxt" target="f" href="#"> Следующая</a>
+        <a href="#" id="prv"> Предыдущая</a>
+        <a id="nxt" href="#"> Следующая</a>
         <a target="_blank" href="https://e.lanbook.com/book/118648">Купить</a>
       </span>
     </div>
