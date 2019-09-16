@@ -1,0 +1,62 @@
+var thisRt  = (x=>x.substr(1+x.lastIndexOf('/')))(top.location.href)  ;
+var MODE=(url=>{    
+        const n=url.lastIndexOf('/')
+             ,edit=url.substr(1+n,3)
+             ,g=url.substr(n-2,3);
+        if (edit!='?!='&&g!='/g/'&&thisRt!=='lect')top.location.href=`${url.substring( 1+n,0 )}g${url.substr(n)}`;
+		return g;
+})(top.location.href);
+
+
+try {
+  if (MODE=='/g/') {
+      const socket =  io();
+      if (socket) console.log('socks on');
+      console.log(thisRt);
+      //socket.emit('sliderstart');
+      socket.on('authoredit_push', msg=>{
+       if (typeof msg!=='string') {
+         //      document.body.innerHTML=(msg.what);
+				console.log(thisRt);
+				console.log(msg.route);
+				// реагировать на изменения должен только тот борд, который редактируется - это же очевидно, да?
+				if (thisRt===msg.route) {
+                   const $doc = new DOMParser().parseFromString(msg.what, 'text/html');
+                   document.body.innerHTML = $doc.body.innerHTML;
+          		}
+        } else {
+		       if (msg=='reloadallbareboards' ) top.location.reload(); else top.location.href=msg;
+				// при посылке пустого сообщения как в https://kodaktor.ru/reloadallbareboards_f  эффект тот же что перезагрузка =)
+        	
+        }   
+      });   
+	  socket.on('disconnect', ()=>console.log('socks off!'));
+  }
+} catch (e) {
+  console.log('no socks');
+}
+
+
+
+
+
+
+
+
+
+//если открыто в режиме «показа кода», то перейти в режим голого веба
+/*old  {       
+        const url = top.location.href;     
+        const n = url.lastIndexOf('/');
+        const edit =  url.substr( 1+n,3 );
+        // ?!= для режима редактирования
+        // 060 для режима и /g/ и просмотра
+        const g =  url.substr( n-2, 3 );
+        // ru/ для режима редактирования и просмотра
+        // /g/ для режима /g/
+        console.log(  );
+        if (  edit != '?!=' && g != '/g/'   ) {
+			top.location.href=`${url.substring( 1+n,0 )}g${url.substr(n)}`
+        }
+      }
+*/

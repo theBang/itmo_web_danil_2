@@ -1,0 +1,12 @@
+HTTP/1.1 200 OK
+Access-Control-Allow-Origin: *
+Access-Control-Allow-Methods: GET,POST,DELETE
+Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
+Content-Type: application/json; charset=utf-8
+X-By: Ilya Goss (c)2017
+X-Test: POST66d5315e4b7f69ebb75a93168f3bf73c
+Content-Length: 37
+ETag: W/"25-UfUBVCkFmh9bv0wY/L22nw"
+set-cookie: connect.sid=s%3A0dHVTe_OXVCb6E75zAJGd-Z0dr96UKqB.7OUhCAirdA%2BRLJK5C1%2Bl7ph4r7SfY%2B9U%2BsrD%2Fnrc9jQ; Path=/; Expires=Wed, 11 Sep 2019 17:52:14 GMT; HttpOnly
+Date: Wed, 11 Sep 2019 15:05:34 GMT
+Connection: keep-alive

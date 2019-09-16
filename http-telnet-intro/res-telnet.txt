@@ -1,0 +1,14 @@
+HTTP/1.1 200 OK
+Access-Control-Allow-Origin: *
+Access-Control-Allow-Methods: GET,POST,DELETE
+Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
+Content-Type: application/json; charset=utf-8
+X-By: Ilya Goss (c)2017
+X-Test: POST25968c7363b897a0935e1a25f93e0005
+Content-Length: 89
+ETag: W/"59-5ATSwp8fvPHEybb4O9dBIw"
+set-cookie: connect.sid=s%3AD0yOvWksM6PZG8awSA7_gVNUepJgxweJ.Vdn8%2Fdwr5xs0a1U2BmzfcIe%2BHvN9Mdph6vubLC3bUtA; Path=/; Expires=Thu, 12 Sep 2019 14:27:00 GMT; HttpOnly
+Date: Thu, 12 Sep 2019 11:40:20 GMT
+Connection: keep-alive
+
+{"name":"Данил","familyname":"Демашов","_METHOD":"POST","_NAME":"Данил"}Connection closed by foreign host.

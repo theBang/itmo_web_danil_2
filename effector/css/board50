@@ -1,0 +1,2 @@
+
+   iframe {border: none; display: block; width: 800px; height: 1220px}  select+span {padding: 4px; background-color: rgba(255, 255, 255, 0.99) ; font:  13px sans-serif; } a {text-decoration: none; padding: 4px; } div {position: fixed; width: 779px;   margin-top: -8px}

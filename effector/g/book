@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://kodaktor.ru/effector.umd.js"></script>
+    <script src="https://kodaktor.ru/j/barewebber"></script>
+    <title>Goss Book</title>
+    <meta charset="utf-8">
+    <meta name="author" content="Ilya Gosudarev">
+    <link rel="stylesheet" href="https://kodaktor.ru/css/board2">
+    <link rel="stylesheet" href="https://kodaktor.ru/css/highcss_atom"> 
+    <link rel="stylesheet" href="https://kodaktor.ru/css/board50">
+  </head>
+  <body>  
+    <div>
+      <select id="s"></select>
+      <span>
+        <a target="f" href="https://kodaktor.ru/gossbook_slides/gossbook-03.png"> Содержание</a>
+        <a target="f" href="#" id="prv"> Предыдущая</a>
+        <a id="nxt" target="f" href="#"> Следующая</a>
+        <a target="_blank" href="https://e.lanbook.com/book/118648">Купить</a>
+      </span>
+    </div>
+    <iframe name="f" id="f" src="https://kodaktor.ru/gossbook_slides/gossbook-01.png"></iframe>
+    <script src="../j/book_badscript.js"></script>
+  </body>
+</html>
