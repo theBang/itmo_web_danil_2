@@ -9,16 +9,13 @@ s.on('request', (req, res) => {
   
   if (req.method == 'POST') {
     console.log("[200] " + req.method + " to " + req.url);
-      
-    req.on('data', function(chunk) {
-      console.log("Received body data:");
-      console.log(chunk.toString());
-    });
+    let data = '';
+    req.on('data', chunk => data += chunk.toString());
     
     req.on('end', function() {
-      // empty 200 OK response for now
+      console.log(`Received body data: ${data}`);
       res.writeHead(200, "OK", {...hu});
-      res.end();
+      res.end(`Your request: url: ${url}; data: ${data}`);
     });
   } else {
     console.log("[405] " + req.method + " to " + req.url);
