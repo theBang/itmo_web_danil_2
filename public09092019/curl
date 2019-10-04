@@ -1,1 +1,8 @@
- curl -X POST -H 'Content-Type: multipart/form-data' -d 'https://raw.githubusercontent.com/theBang/itmo_web_danil_2/master/public09092019/dansecret' https://fork.kodaktor.ru/mystery?danil-demashov
+ curl -X POST -H 'Content-Type: multipart/form-data' -d 'https://my-files.ru/Save/bw0ci1/dansecret' https://fork.kodaktor.ru/mystery?danil-demashov
+
+
+https://my-files.ru/bw0ci1
+
+curl -X POST -H 'Content-Type: multipart/form-data' -d 'https://raw.githubusercontent.com/theBang/itmo_web_danil_2/master/public09092019/dansecret' https://fork.kodaktor.ru/mystery?danil-demashov
+
+curl https://fork.kodaktor.ru/mystery?danil-demashov -X POST -H 'Content-Type: multipart/form-data' -d 'https://raw.githubusercontent.com/theBang/itmo_web_danil_2/master/public09092019/dansecret'
