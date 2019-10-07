@@ -70,6 +70,4 @@ function russian(n) {
     }
 }
 
-exports default {
-    
-}
+module.exports = russian;
