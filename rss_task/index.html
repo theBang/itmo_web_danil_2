@@ -1,0 +1,40 @@
+<html>
+    <head></head>
+    <body>
+        <h1>Take RSS about Node.js</h1>
+        <label> 
+            Number of last news 
+            <input type="number" min="1" max="20" value="1">
+        </label>
+        <button>Fetch</button>
+        <ul>
+        </ul>
+        <script>
+        { 
+            document.querySelector('button').addEventListener('click', async ()=> {
+                const ref = 'http://localhost:3000/links';
+                const num = {
+                    n: document.querySelector('input').value
+                }
+                const options = {
+                    method: 'POST', // *GET, POST, PUT, DELETE, etc.
+                    mode: 'cors', // no-cors, cors, *same-origin
+                    cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+                    headers: {
+                        'Content-Type': 'application/json',
+                        // 'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    redirect: 'follow', // manual, *follow, error
+                    referrer: 'no-referrer', // no-referrer, *client
+                    body: JSON.stringify(num), // тип данных в body должен соответвовать значен    ию заголовка "Content-Type"
+                } 
+                const links = await fetch(ref, options).then(data => data.json());
+                document.querySelector('ul').innerHTML = '';
+                for (let link of links) {
+                    document.querySelector('ul').innerHTML += `<li><a href='${link.link}'>${link.title}</a></li>`;
+                }
+            }); 
+        }
+        </script>
+    </body>
+</html>
