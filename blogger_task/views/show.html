@@ -1,0 +1,42 @@
+<html lang="ru">
+    <head>
+        <meta charset="utf-8">
+        <meta author="DanilD">
+    </head>
+    <body>
+        <h1></h1>
+        <h2></h2>
+        <p></p>
+        <button>Delete</button>
+
+        <script type="text/javascript">
+        { 
+            const link = window.location.href.split('/');
+            const postRef = 'http://localhost:3000/api/posts/' + link[link.length - 1];
+
+            window.addEventListener('load', async () => {
+                const post = await fetch(postRef).then(data => data.json());
+
+                document.querySelector('h1').innerHTML = post.title;
+                document.querySelector('h2').innerHTML = `Categories: ${post.categories}`;
+                document.querySelector('p').innerHTML = `Text: ${post.content}`;
+            }); 
+
+            document.querySelector('button').addEventListener('click', async () => {
+                const options = {
+                    method: 'DELETE', // *GET, POST, PUT, DELETE, etc.
+                    mode: 'cors', // no-cors, cors, *same-origin
+                    cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+                    headers: {
+                        'Content-Type': 'application/json',
+                        // 'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    redirect: 'follow', // manual, *follow, error
+                    referrer: 'no-referrer', // no-referrer, *client
+                } 
+                console.log(await fetch(postRef, options).then(data => data.json()));
+            });
+        }
+        </script>
+    </body>
+</html>

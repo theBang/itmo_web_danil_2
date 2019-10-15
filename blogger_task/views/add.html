@@ -1,0 +1,46 @@
+<html lang="ru">
+    <head>
+        <meta charset="utf-8">
+        <meta author="DanilD">
+    <body>
+        <h1>Add Post</h1>
+        <form name="addform">
+            <input type="text" name="title" placeholder="Добавьте название" minlength="3" required><br>
+            <input type="text" name="categories" placeholder="Добавьте категории" minlength="3" required><br>
+            <textarea name="content" placeholder="Добавьте контент" required></textarea><br>
+            <button>Добавить</button>
+        </form>
+        <style type="text/css">
+        {
+
+        }
+        </style>
+        <script type="text/javascript">
+        {
+            document.querySelector('form').addEventListener('submit', async e => {
+                e.preventDefault();
+                const form = e.target;
+                const ref = 'http://localhost:3000/api/posts';
+                const post = {
+                    title: form.title.value,
+                    categories: form.categories.value,
+                    content: form.content.value
+                }
+                const options = {
+                    method: 'POST', // *GET, POST, PUT, DELETE, etc.
+                    mode: 'cors', // no-cors, cors, *same-origin
+                    cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+                    headers: {
+                        'Content-Type': 'application/json',
+                        // 'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    redirect: 'follow', // manual, *follow, error
+                    referrer: 'no-referrer', // no-referrer, *client
+                    body: JSON.stringify(post), // тип данных в body должен соответвовать значен    ию заголовка "Content-Type"
+                } 
+                console.log(await fetch(ref, options).then(data => data.json()));
+            });
+        }
+        </script>
+    </body>
+</html>
