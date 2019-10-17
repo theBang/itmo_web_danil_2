@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Blogger task</title>
+    <meta charset="utf-8">
+    <meta author="DanilD">
+    <style>
+      nav ul {
+        list-style-type: none;
+        padding: 0;
+      }
+      nav li {
+        display: inline-block;
+      }
+      nav a {
+        padding: 5px;
+      }
+      nav a.router-link-active, nav li.router-link-active > a {
+        color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <nav>
+        <ul>
+          <li><router-link to="/posts">Посты</router-link></li>
+          <li><router-link to="/posts/new">Добавить пост</router-link></li>
+        </ul>
+      </nav>
+      <router-view></router-view>
+    </div>
+    <script src="https://unpkg.com/vue"></script>
+    <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+    <script type="text/x-template" id="home-template">
+      <div>
+        <h1>Posts</h1>
+        <ul>
+          <li v-for="post in posts">
+            <router-link :to="'/posts/' + post._id">{{ post.title }}</router-link>
+          </li>
+        </ul>
+      </div>
+    </script>
+    <script type="text/x-template" id="new-template">
+      <div>
+        <form @submit.prevent="onSubmit">
+          <input v-model="title" type="text" placeholder="Добавьте название" minlength="3" required><br>
+          <input v-model="categories" type="text" placeholder="Добавьте категории" minlength="3" required><br>
+          <textarea v-model="content" placeholder="Добавьте контент" required></textarea><br>
+          <button>Добавить</button>
+        </form>
+      </div>
+    </script>
+    <script type="text/x-template" id="post-template">
+      <div>
+        <h1>{{ title }}</h1>
+        <h2>{{ categories }}</h2>
+        <p>{{ content }}</p>
+        <button @click="deletePost">Delete</button>
+      </div>
+    </script>
+    <script>
+      // компоненты, которые обрабатывают пути
+      const NotFound = { 
+        template: '<p>Page Not Found</p>' 
+      }
+
+      const Home = { 
+        template: '#home-template',
+        data () {
+          return {
+            posts: []
+          }
+        }, 
+        created: async function () {
+          this.posts = await fetch('http://localhost:3000/api/posts').then(data => data.json());
+        }
+      }
+
+      const New = { 
+        template: '#new-template',
+        data () {
+          return {
+            title: null,
+            categories: null,
+            content: null
+          }
+        }, 
+        methods: {
+          onSubmit: async function () {
+            const ref = 'http://localhost:3000/api/posts';
+            const post = {
+              title: this.title,
+              categories: this.categories,
+              content: this.content
+            };
+            const options = {
+              method: 'POST', // *GET, POST, PUT, DELETE, etc.
+              mode: 'cors', // no-cors, cors, *same-origin
+              cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+              headers: {
+                'Content-Type': 'application/json',
+                // 'Content-Type': 'application/x-www-form-urlencoded',
+              },
+              redirect: 'follow', // manual, *follow, error
+              referrer: 'no-referrer', // no-referrer, *client
+              body: JSON.stringify(post), // тип данных в body должен соответвовать значен    ию заголовка "Content-Type"
+            }; 
+            await fetch(ref, options).then(data => data.json());
+            this.$router.push('/posts');
+          }
+        }
+      };
+
+      const Post = { 
+        template: '#post-template',
+        data () {
+          return {
+            title: null,
+            categories: null,
+            content: null
+          }
+        }, 
+        methods: {
+          deletePost: async function () {
+            const options = {
+                method: 'DELETE', // *GET, POST, PUT, DELETE, etc.
+                mode: 'cors', // no-cors, cors, *same-origin
+                cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+                headers: {
+                    'Content-Type': 'application/json',
+                    // 'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                redirect: 'follow', // manual, *follow, error
+                referrer: 'no-referrer', // no-referrer, *client
+            } 
+            await fetch('http://localhost:3000/api/posts/' + this.$route.params.id, options)
+              .then(data => data.json());
+
+            this.$router.push('/posts');
+          }
+        },
+        created: async function () {
+          const post = 
+            await fetch('http://localhost:3000/api/posts/' + this.$route.params.id).then(data => data.json()); 
+          this.title = post.title;
+          this.categories = post.categories;
+          this.content = post.content;
+        }
+      };
+
+      const routes = [
+        { path: '/posts', component: Home, name: 'home' },
+        { path: '/posts/new', component: New, name: 'new-post' },
+        { path: '/posts/:id', component: Post, name: 'show-post' },
+        { path: '*', component: NotFound, name: 'not-found' }
+      ];
+      
+      const router = new VueRouter({
+          mode: 'history',
+          routes: routes
+      });
+      
+      new Vue({
+        el: '#app',
+        router: router
+      })
+    </script>
+  </body>
+</html>
