@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Маршрутизация Vue.js</title>
+    <meta charset="utf-8" />
+    <style>
+      ul{list-style-type: none;padding: 0;}
+      li{display: inline-block;}
+      a{padding: 5px;}
+      a.router-link-active, li.router-link-active>a {
+      color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <ul>
+        <li><router-link to="/posts">Посты</router-link></li>
+        <li><router-link to="/posts/new">Добавить пост</router-link></li>
+      </ul>
+      <router-view></router-view>
+    </div>
+    <script src="https://unpkg.com/vue"></script>
+    <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+    <script type="text/x-template" id="home-template">
+      <div>
+        <h1>Posts</h1>
+        <ul>
+          <li v-for="post in posts">
+            <router-link to="/posts/new">{{ post.title }}</router-link>
+          </li>
+        </ul>
+      </div>
+    </script>
+    <script>
+      // компоненты, которые обрабатывают пути
+      const NotFound = { 
+        template: '<p>Page Not Found</p>' 
+      }
+      const Home = { 
+        template: '#home-template',
+        data () {
+          return {
+            posts: []
+          }
+        }, 
+        created: async function () {
+          this.posts = await fetch('http://localhost:3000/api/posts').then(data => data.json());
+        }
+      }
+      const New = { template: '<p>About Page</p>' }
+      
+      // маршруты, сопотавленные с компонентами
+      const routes = [
+        { path: '/posts', component: Home },
+        { path: '/posts/new', component: New },
+        { path: '*', component: NotFound }
+      ];
+      // создаем объект маршрутизатора
+      const router = new VueRouter({
+          mode: 'history',
+          routes: routes
+      });
+      
+      new Vue({
+        el: '#app',
+        router: router
+      })
+    </script>
+  </body>
+</html>
