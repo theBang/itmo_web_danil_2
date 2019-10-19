@@ -5,18 +5,98 @@
     <meta charset="utf-8">
     <meta author="DanilD">
     <style>
+      /*
+      body {
+        font-family: "Lucida Console", Monaco, monospace
+      }
+
+      nav {
+        padding-bottom: 1%;
+      }
       nav ul {
         list-style-type: none;
+        margin: 0;
         padding: 0;
+        overflow: hidden;
+        border: 1px solid #e7e7e7;
+        background-color: #f3f3f3;
       }
       nav li {
-        display: inline-block;
+        float: left;
       }
       nav a {
-        padding: 5px;
+        display: block;
+        color: #666;
+        text-align: center;
+        padding: 14px 16px;
+        text-decoration: none;
       }
-      nav a.router-link-active, nav li.router-link-active > a {
-        color: red;
+
+      nav li a:hover:not(.router-link-exact-active) {
+        background-color: #ddd;
+      }
+
+      nav a.router-link-exact-active {
+        color: white;
+        background-color: #4CAF50;
+      }
+
+      #app {
+        width: 100%;
+      }
+
+      #app > div {
+        margin: 5% 30%;
+      }
+      */
+      button {
+        background-color: #4caf50;
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+        width: 50%;
+      }
+
+      button:hover {
+        background-color: #6bbf6e;
+      }
+
+      button:focus {
+        background-color: #2d692f;
+      }
+
+      .form-post {
+        border-radius: 5px;
+        background-color: #f2f2f2;
+        padding: 20px;
+      }
+
+      .form-post input[type=text] {
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        display: inline-block;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+      }
+
+      .form-post textarea {
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        display: inline-block;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        resize: none; 
+        height: 120px;
       }
     </style>
   </head>
@@ -34,7 +114,7 @@
     <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
     <script type="text/x-template" id="home-template">
       <div>
-        <h1>Posts</h1>
+        <h1>Блог</h1>
         <ul>
           <li v-for="post in posts">
             <router-link :to="'/posts/' + post._id">{{ post.title }}</router-link>
@@ -43,21 +123,24 @@
       </div>
     </script>
     <script type="text/x-template" id="new-template">
-      <div>
+      <div class="form-post">
         <form @submit.prevent="onSubmit">
-          <input v-model="title" type="text" placeholder="Добавьте название" minlength="3"><br>
-          <input v-model="categories" type="text" placeholder="Добавьте категории" minlength="3" required><br>
-          <textarea v-model="content" placeholder="Добавьте контент" required></textarea><br>
+          <input v-model="title" type="text" placeholder="Добавьте название"><br>
+          <input v-model="categories" type="text" placeholder="Добавьте категории"><br>
+          <textarea v-model="content" placeholder="Добавьте контент"></textarea><br>
           <button>Добавить</button>
         </form>
       </div>
     </script>
     <script type="text/x-template" id="post-template">
-      <div>
-        <h1>{{ title }}</h1>
-        <h2>{{ categories }}</h2>
-        <p>{{ content }}</p>
-        <button @click="deletePost">Delete</button>
+      <div class="form-post">
+        <form @submit.prevent="updatePost">
+          <input v-model="title" type="text" placeholder="Измените название"><br>
+          <input v-model="categories" type="text" placeholder="Измените категории"><br>
+          <textarea v-model="content" placeholder="Измените контент"></textarea><br>
+          <button>Изменить</button>
+          <button @click="deletePost" type="button">Удалить</button>
+        </form>
       </div>
     </script>
     <script>
@@ -144,11 +227,40 @@
 
             if (post.error) alert(post.error);
             else this.$router.push('/posts');
+          },
+          updatePost: async function () {
+            const post = {
+              title: this.title,
+              categories: this.categories,
+              content: this.content
+            };
+
+            const options = {
+              method: 'PUT', // *GET, POST, PUT, DELETE, etc.
+              mode: 'cors', // no-cors, cors, *same-origin
+              cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+              headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                // 'Content-Type': 'application/x-www-form-urlencoded',
+              },
+              redirect: 'follow', // manual, *follow, error
+              referrer: 'no-referrer', // no-referrer, *client
+              body: JSON.stringify(post), // тип данных в body должен соответвовать значен    ию заголовка "Content-Type"
+            } 
+
+            const updPost = 
+              await fetch('http://localhost:3000/api/posts/' + this.$route.params.id, options)
+                .then(data => data.json());
+
+            if (updPost.error) alert(updPost.error);
+            else this.$router.push('/posts');
           }
         },
         created: async function () {
           const post = 
-            await fetch('http://localhost:3000/api/posts/' + this.$route.params.id).then(data => data.json()); 
+            await fetch('http://localhost:3000/api/posts/' + this.$route.params.id)
+              .then(data => data.json()); 
           if (post.error) alert(post.error);
           else {
             this.title = post.title;
@@ -172,6 +284,9 @@
       
       new Vue({
         el: '#app',
+        data: {
+          isActive: true
+        },
         router: router
       })
     </script>

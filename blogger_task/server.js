@@ -1,5 +1,6 @@
 const Koa = require('koa');
 const Router = require('koa-router');
+const serve = require('koa-static');
 const cors = require('@koa/cors');
 const views = require('koa-views');
 const bodyparser = require('koa-bodyparser');
@@ -43,9 +44,19 @@ const postSchema = new mongoose.Schema({
   }
 });
 
+postSchema.pre('replaceOne', function(next) {
+  const titleCheck = this._update.title.length > 2 && this._update.title.length < 41;
+  const categoriesCheck = this._update.categories.length > 2 && this._update.categories.length < 41;
+  const contentCheck = this._update.content.length > 2 && this._update.content.length < 121;
+  if (titleCheck && categoriesCheck && contentCheck) next();
+  else next(new Error(`Replace Error (not right: ${(!titleCheck) ? 'title': ((!categoriesCheck) ? 'categories' : 'content')})`));
+});
+
 const Post = mongoose.model('Post', postSchema);
 
 app
+  .use(serve(__dirname + '/dist'))
+  .use(cors())
   .use(logger())
   .use(bodyparser())
   .use(async (ctx, next) => {
@@ -89,9 +100,9 @@ app
   //.use(views(path.join(__dirname, '/views'), { extension: 'pug' }));
 
 routerUI
-  .get('/', async (ctx, next) => ctx.body = await readFile('./views/view.html', { encoding: 'utf-8' }))
-  .get('/new', async (ctx, next) => ctx.body = await readFile('./views/view.html', { encoding: 'utf-8' }))
-  .get('/:id', async (ctx, next) => ctx.body = await readFile('./views/view.html', { encoding: 'utf-8' }));
+  .get('/', async (ctx, next) => ctx.body = await readFile(__dirname + '/client/dist/index.html', { encoding: 'utf-8' }))
+  .get('/new', async (ctx, next) => ctx.body = await readFile(__dirname + '/client/dist/index.html', { encoding: 'utf-8' }))
+  .get('/:id', async (ctx, next) => ctx.body = await readFile(__dirname + '/client/dist/index.html', { encoding: 'utf-8' }));
 
 routerAPI
   .use(cors())
@@ -113,7 +124,17 @@ routerAPI
     const deleted = await Post.deleteOne({ _id: ctx.params.id });
 
     if (deleted.ok) ctx.body = post;
-    ctx.throw(400, 'Post was not deleted');
+    else ctx.throw(400, 'Post was not deleted');
+  })
+  .put('/:id', async (ctx, next) => {
+    const replaced = await Post.replaceOne({ _id: ctx.params.id }, {
+      title: ctx.request.body.title,
+      categories: ctx.request.body.categories,
+      content: ctx.request.body.content
+    });
+
+    if (replaced.nModified) ctx.body = await Post.findById(ctx.params.id).exec();
+    else ctx.throw(400, 'Post was not modified');
   });
 
 app
