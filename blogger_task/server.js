@@ -14,9 +14,33 @@ const routerAPI = new Router({ prefix: '/api/posts' });
 const routerUI = new Router({ prefix: '/posts' });
 
 const postSchema = new mongoose.Schema({
-  title: String,
-  categories: String,
-  content: String
+  title: {
+    type: String,
+    validate: {
+      validator: function(v) {
+        return v.length > 2 && v.length < 41;
+      },
+      message: props => `${props.value} is not a valid!`
+    }
+  },
+  categories: {
+    type: String,
+    validate: {
+      validator: function(v) {
+        return v.length > 2 && v.length < 41;
+      },
+      message: props => `${props.value} is not a valid!`
+    }
+  },
+  content: {
+    type: String,
+    validate: {
+      validator: function(v) {
+        return v.length > 2 && v.length < 121;
+      },
+      message: props => `${props.value} is not a valid!`
+    }
+  }
 });
 
 const Post = mongoose.model('Post', postSchema);
@@ -44,9 +68,22 @@ app
         }
       }
     } catch(e) {
-      ctx.status = err.status || 500;
-      ctx.body = err.message;
-      ctx.app.emit('error', err, ctx);
+      ctx.status = e.status || 500;
+      switch (ctx.accepts('html', 'json')) {
+        case 'html':
+          ctx.type = 'html';
+          ctx.body = `<h1>${e.message}</h1>`;
+          break;
+        case 'json':
+          ctx.body = {
+            error: e.message
+          };
+          break;
+        default:
+          ctx.type = 'text';
+          ctx.body = e.message;
+      }
+      ctx.app.emit('error', e, ctx);
     }
   });  
   //.use(views(path.join(__dirname, '/views'), { extension: 'pug' }));
@@ -68,7 +105,7 @@ routerAPI
     ctx.body = await new Post({ 
       title: ctx.request.body.title,
       categories: ctx.request.body.categories,
-      content: ctx.request.body.categories
+      content: ctx.request.body.content
     }).save();
   })
   .delete('/:id', async (ctx, next) => {
@@ -76,7 +113,7 @@ routerAPI
     const deleted = await Post.deleteOne({ _id: ctx.params.id });
 
     if (deleted.ok) ctx.body = post;
-    else new Error('Post was not deleted');
+    ctx.throw(400, 'Post was not deleted');
   });
 
 app

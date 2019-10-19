@@ -45,7 +45,7 @@
     <script type="text/x-template" id="new-template">
       <div>
         <form @submit.prevent="onSubmit">
-          <input v-model="title" type="text" placeholder="Добавьте название" minlength="3" required><br>
+          <input v-model="title" type="text" placeholder="Добавьте название" minlength="3"><br>
           <input v-model="categories" type="text" placeholder="Добавьте категории" minlength="3" required><br>
           <textarea v-model="content" placeholder="Добавьте контент" required></textarea><br>
           <button>Добавить</button>
@@ -61,7 +61,6 @@
       </div>
     </script>
     <script>
-      // компоненты, которые обрабатывают пути
       const NotFound = { 
         template: '<p>Page Not Found</p>' 
       }
@@ -74,7 +73,9 @@
           }
         }, 
         created: async function () {
-          this.posts = await fetch('http://localhost:3000/api/posts').then(data => data.json());
+          const posts = await fetch('http://localhost:3000/api/posts').then(data => data.json());  
+          if (posts.error) alert(posts.error);
+          else this.posts = posts;
         }
       }
 
@@ -100,6 +101,7 @@
               mode: 'cors', // no-cors, cors, *same-origin
               cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
               headers: {
+                'Accept': 'application/json',
                 'Content-Type': 'application/json',
                 // 'Content-Type': 'application/x-www-form-urlencoded',
               },
@@ -107,8 +109,9 @@
               referrer: 'no-referrer', // no-referrer, *client
               body: JSON.stringify(post), // тип данных в body должен соответвовать значен    ию заголовка "Content-Type"
             }; 
-            await fetch(ref, options).then(data => data.json());
-            this.$router.push('/posts');
+            const addPost = await fetch(ref, options).then(data => data.json());
+            if (addPost.error) alert(addPost.error);
+            else this.$router.push('/posts');
           }
         }
       };
@@ -129,24 +132,29 @@
                 mode: 'cors', // no-cors, cors, *same-origin
                 cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
                 headers: {
-                    'Content-Type': 'application/json',
-                    // 'Content-Type': 'application/x-www-form-urlencoded',
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json',
+                  // 'Content-Type': 'application/x-www-form-urlencoded',
                 },
                 redirect: 'follow', // manual, *follow, error
                 referrer: 'no-referrer', // no-referrer, *client
             } 
-            await fetch('http://localhost:3000/api/posts/' + this.$route.params.id, options)
+            const post = await fetch('http://localhost:3000/api/posts/' + this.$route.params.id, options)
               .then(data => data.json());
 
-            this.$router.push('/posts');
+            if (post.error) alert(post.error);
+            else this.$router.push('/posts');
           }
         },
         created: async function () {
           const post = 
             await fetch('http://localhost:3000/api/posts/' + this.$route.params.id).then(data => data.json()); 
-          this.title = post.title;
-          this.categories = post.categories;
-          this.content = post.content;
+          if (post.error) alert(post.error);
+          else {
+            this.title = post.title;
+            this.categories = post.categories;
+            this.content = post.content;
+          }  
         }
       };
 
