@@ -1,0 +1,14 @@
+{
+  "name": "puppet",
+  "version": "1.0.0",
+  "main": "index.js",
+  "dependencies": {
+    "faker": "^4.1.0",
+    "mocha": "^5.2.0",
+    "puppeteer": "^1.8.0",
+    "should": "^13.2.3"
+  },
+  "scripts": {
+  	"test": "mocha"
+  }
+}
