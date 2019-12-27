@@ -4,11 +4,18 @@ import Home from '../views/Home.vue'
 
 Vue.use(VueRouter)
 
+const refs = {
+  post: 'https://tranquil-waters-42736.herokuapp.com/api/posts'
+}
+
 const routes = [
   {
     path: '/',
     name: 'home',
-    component: Home
+    component: Home,
+    props: {
+      ref: refs.post
+    }
   },
   {
     path: '/new',
@@ -16,7 +23,10 @@ const routes = [
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/New.vue')
+    component: () => import(/* webpackChunkName: "new" */ '../views/New.vue'),
+    props: {
+      ref: refs.post
+    }
   },
   {
     path: '/:id',
@@ -24,7 +34,8 @@ const routes = [
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/Post.vue')
+    component: () => import(/* webpackChunkName: "show" */ '../views/Post.vue'),
+    props: route => ({ ref: refs.post + '/' + route.params.id })
   },
   
 ]

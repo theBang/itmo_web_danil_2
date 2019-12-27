@@ -12,11 +12,12 @@
 
 <style>
 body {
-  font-family: "Lucida Console", Monaco, monospace
+  font-family: "Lucida Console", Monaco, monospace;
+  width: 100%;
 }
 
 nav {
-  padding-bottom: 1%;
+  margin: 1%;
 }
 nav ul {
   list-style-type: none;
@@ -48,6 +49,8 @@ nav a.router-link-exact-active {
 
 #app {
   width: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 #app > div {

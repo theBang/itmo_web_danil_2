@@ -16,6 +16,12 @@
 
 export default {
   name: 'showPost',
+  props: {
+    ref: {
+      type: String,
+      required: true
+    }
+  },
   data () {
     return {
       title: null,
@@ -37,44 +43,47 @@ export default {
           redirect: 'follow', // manual, *follow, error
           referrer: 'no-referrer', // no-referrer, *client
       } 
-      const post = await fetch('http://localhost:3000/api/posts/' + this.$route.params.id, options)
+      const post = await fetch(this.ref, options)
         .then(data => data.json());
 
       if (post.error) alert(post.error);
       else this.$router.push('/');
     },
     updatePost: async function () {
-      const post = {
-        title: this.title,
-        categories: this.categories,
-        content: this.content
-      };
+      const titleCheck = this.title.length > 2 && this.title.length < 41;
+      const categoriesCheck = this.categories.length > 2 && this.categories.length < 41;
+      const contentCheck = this.content.length > 2 && this.content.length < 121;
+      if (titleCheck && categoriesCheck && contentCheck) {
+        const post = {
+          title: this.title,
+          categories: this.categories,
+          content: this.content
+        };
 
-      const options = {
-        method: 'PUT', // *GET, POST, PUT, DELETE, etc.
-        mode: 'cors', // no-cors, cors, *same-origin
-        cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          // 'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        redirect: 'follow', // manual, *follow, error
-        referrer: 'no-referrer', // no-referrer, *client
-        body: JSON.stringify(post), // тип данных в body должен соответвовать значен    ию заголовка "Content-Type"
-      } 
+        const options = {
+          method: 'PUT', // *GET, POST, PUT, DELETE, etc.
+          mode: 'cors', // no-cors, cors, *same-origin
+          cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            // 'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          redirect: 'follow', // manual, *follow, error
+          referrer: 'no-referrer', // no-referrer, *client
+          body: JSON.stringify(post), // тип данных в body должен соответвовать значен    ию заголовка "Content-Type"
+        } 
 
-      const updPost = 
-        await fetch('http://localhost:3000/api/posts/' + this.$route.params.id, options)
-          .then(data => data.json());
+        const updPost = await fetch(this.ref, options).then(data => data.json());
 
-      if (updPost.error) alert(updPost.error);
-      else this.$router.push('/posts');
+        if (updPost.error) alert(updPost.error);
+        else this.$router.push('/');
+      } else alert(`Not right: ${(!titleCheck) ? 'title': ((!categoriesCheck) ? 'categories' : 'content')}`);
     }
   },
   created: async function () {
     const post = 
-      await fetch('http://localhost:3000/api/posts/' + this.$route.params.id)
+      await fetch('https://tranquil-waters-42736.herokuapp.com/api/posts/' + this.$route.params.id)
         .then(data => data.json()); 
     if (post.error) alert(post.error);
     else {

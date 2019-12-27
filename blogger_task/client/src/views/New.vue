@@ -12,6 +12,12 @@
 <script>
 export default {
   name: 'new',
+  props: {
+    ref: {
+      type: String,
+      required: true
+    }
+  },
   data () {
     return {
       title: null,
@@ -21,28 +27,32 @@ export default {
   }, 
   methods: {
     onSubmit: async function () {
-      const ref = 'http://localhost:3000/api/posts';
-      const post = {
-        title: this.title,
-        categories: this.categories,
-        content: this.content
-      };
-      const options = {
-        method: 'POST', // *GET, POST, PUT, DELETE, etc.
-        mode: 'cors', // no-cors, cors, *same-origin
-        cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          // 'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        redirect: 'follow', // manual, *follow, error
-        referrer: 'no-referrer', // no-referrer, *client
-        body: JSON.stringify(post), // тип данных в body должен соответвовать значен    ию заголовка "Content-Type"
-      }; 
-      const addPost = await fetch(ref, options).then(data => data.json());
-      if (addPost.error) alert(addPost.error);
-      else this.$router.push('/');
+      const titleCheck = this.title.length > 2 && this.title.length < 41;
+      const categoriesCheck = this.categories.length > 2 && this.categories.length < 41;
+      const contentCheck = this.content.length > 2 && this.content.length < 121;
+      if (titleCheck && categoriesCheck && contentCheck) {
+        const post = {
+          title: this.title,
+          categories: this.categories,
+          content: this.content
+        };
+        const options = {
+          method: 'POST', // *GET, POST, PUT, DELETE, etc.
+          mode: 'cors', // no-cors, cors, *same-origin
+          cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            // 'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          redirect: 'follow', // manual, *follow, error
+          referrer: 'no-referrer', // no-referrer, *client
+          body: JSON.stringify(post), // тип данных в body должен соответвовать значен    ию заголовка "Content-Type"
+        }; 
+        const addPost = await fetch(this.ref, options).then(data => data.json());
+        if (addPost.error) alert(addPost.error);
+        else this.$router.push('/');
+      } else alert(`Not right: ${(!titleCheck) ? 'title': ((!categoriesCheck) ? 'categories' : 'content')}`);
     }
   }
 }

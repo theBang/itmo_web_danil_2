@@ -5,7 +5,6 @@ const cors = require('@koa/cors');
 const views = require('koa-views');
 const bodyparser = require('koa-bodyparser');
 const logger = require('koa-logger');
-const path = require('path');
 const mongoose = require('mongoose');
 const config = require('./config');
 const { promises: { readFile } } = require('fs');
@@ -96,13 +95,19 @@ app
       }
       ctx.app.emit('error', e, ctx);
     }
-  });  
-  //.use(views(path.join(__dirname, '/views'), { extension: 'pug' }));
+  })
+;  
+//.use(views(path.join(__dirname, '/views'), { extension: 'pug' }));
+
+const getUI = 
+  () => async ctx => 
+    ctx.body = await readFile(__dirname + '/dist/index.html', { encoding: 'utf-8' });
 
 routerUI
-  .get('/', async (ctx, next) => ctx.body = await readFile(__dirname + '/client/dist/index.html', { encoding: 'utf-8' }))
-  .get('/new', async (ctx, next) => ctx.body = await readFile(__dirname + '/client/dist/index.html', { encoding: 'utf-8' }))
-  .get('/:id', async (ctx, next) => ctx.body = await readFile(__dirname + '/client/dist/index.html', { encoding: 'utf-8' }));
+  .get('/', getUI())
+  .get('/new', getUI())
+  .get('/:id', getUI())
+;
 
 routerAPI
   .use(cors())
@@ -135,12 +140,14 @@ routerAPI
 
     if (replaced.nModified) ctx.body = await Post.findById(ctx.params.id).exec();
     else ctx.throw(400, 'Post was not modified');
-  });
+  })
+;
 
 app
   .use(routerAPI.routes())
   .use(routerUI.routes())
-  .listen(config.PORT, () => console.log(`process: ${process.pid}`));
+  .listen(config.PORT, () => console.log(`process: ${process.pid}`))
+;
 
 mongoose.connect(config.DB_URL, {useNewUrlParser: true, useUnifiedTopology: true});
 mongoose.connection.on('connected', () => console.log('Mongoose opened to ' + config.DB_URL));
