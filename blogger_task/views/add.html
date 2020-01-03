@@ -39,7 +39,9 @@
                     body: JSON.stringify(post), // тип данных в body должен соответвовать значен    ию заголовка "Content-Type"
                 } 
                 console.log(await fetch(ref, options).then(data => data.json()));
+                window.location.replace('http://localhost:3000/posts');
             });
+
         }
         </script>
     </body>
