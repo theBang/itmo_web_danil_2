@@ -2,29 +2,51 @@
     <head>
         <meta charset="utf-8">
         <meta author="DanilD">
+        <link rel="stylesheet" type="text/css" href="/style.css">
     </head>
     <body>
+        <nav>
+          <ul>
+            <li><a href="/posts">Посты</a></li>
+            <li><a href="/posts/new">Добавить пост</a></li>
+          </ul>
+        </nav>
+        <div>
+            <h1>Изменить пост</h1>
+            <form name="edit-form" class="form-post">
+                <input type="text" name="title" placeholder="Название" minlength="3" required><br>
+                <input type="text" name="categories" placeholder="Категории" minlength="3" required><br>
+                <textarea name="content" placeholder="Контент" required></textarea><br>
+                <button id="update-btn">Изменить</button>
+                <button id="delete-btn">Удалить</button>
+            </form>
+        </div>
         <h1></h1>
         <h2></h2>
         <p></p>
-        <button>Delete</button>
+        
 
         <script type="text/javascript">
         { 
             const link = window.location.href.split('/');
-            const postRef = 'http://localhost:3000/api/posts/' + link[link.length - 1];
-
+            const postRef = '/api/posts/' + link[link.length - 1];
+            const form = document.querySelector('form');
             window.addEventListener('load', async () => {
                 const post = await fetch(postRef).then(data => data.json());
-
-                document.querySelector('h1').innerHTML = post.title;
-                document.querySelector('h2').innerHTML = `Categories: ${post.categories}`;
-                document.querySelector('p').innerHTML = `Text: ${post.content}`;
+                form.title.value = post.title;
+                form.categories.value = post.categories;
+                form.content.value = post.content;
             }); 
 
-            document.querySelector('button').addEventListener('click', async () => {
+            document.querySelector('#update-btn').addEventListener('click', async e => {
+                e.preventDefault();
+                const post = {
+                    title: form.title.value,
+                    categories: form.categories.value,
+                    content: form.content.value
+                }
                 const options = {
-                    method: 'DELETE', // *GET, POST, PUT, DELETE, etc.
+                    method: 'PUT', // *GET, POST, PUT, DELETE, etc.
                     mode: 'cors', // no-cors, cors, *same-origin
                     cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
                     headers: {
@@ -33,8 +55,30 @@
                     },
                     redirect: 'follow', // manual, *follow, error
                     referrer: 'no-referrer', // no-referrer, *client
+                    body: JSON.stringify(post), // тип данных в body должен соответвовать значен    ию заголовка "Content-Type"
                 } 
                 console.log(await fetch(postRef, options).then(data => data.json()));
+            });
+
+            document.querySelector('#delete-btn').addEventListener('click', async e => {
+                e.preventDefault();
+                const options = {
+                  method: 'DELETE', // *GET, POST, PUT, DELETE, etc.
+                  mode: 'cors', // no-cors, cors, *same-origin
+                  cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+                  headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    // 'Content-Type': 'application/x-www-form-urlencoded',
+                  },
+                  redirect: 'follow', // manual, *follow, error
+                  referrer: 'no-referrer', // no-referrer, *client
+                } 
+                const post = await fetch(postRef, options)
+                    .then(data => data.json());
+
+                if (post.error) alert(post.error);
+                window.location.replace('/posts');
             });
         }
         </script>

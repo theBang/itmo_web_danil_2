@@ -7,6 +7,7 @@ const bodyparser = require('koa-bodyparser');
 const logger = require('koa-logger');
 const mongoose = require('mongoose');
 const config = require('./config');
+const session = require('koa-session');
 const { promises: { readFile } } = require('fs');
 
 const app = new Koa();
@@ -53,6 +54,12 @@ postSchema.pre('replaceOne', function(next) {
 
 const Post = mongoose.model('Post', postSchema);
 
+app.proxy = true;
+
+// sessions
+app.keys = ['your-session-secret'];
+app.use(session({}, app));
+
 app
   .use(serve(__dirname + '/public'))
   .use(cors())
@@ -98,6 +105,45 @@ app
   })
 ;  
 //.use(views(path.join(__dirname, '/views'), { extension: 'pug' }));
+
+// authentication
+const passport = require('koa-passport');
+const LocalStrategy = require('passport-local').Strategy;
+
+const fetchUser = (() => {
+  const user = { id: 1, username: 'test', password: 'test' };
+  return async () => {
+    return user;
+  }
+})();
+
+passport.serializeUser((user, done) => {
+  done(null, user.id)
+});
+
+passport.deserializeUser(async (id, done) => {
+  try {
+    const user = await fetchUser();
+    done(null, user);
+  } catch(err) {
+    done(err);
+  }
+});
+
+passport.use(new LocalStrategy((username, password, done) => {
+  fetchUser()
+    .then(user => {
+      if (username === user.username && password === user.password) {
+        done(null, user);
+      } else {
+        done(null, false);
+      }
+    })
+    .catch((err) => { done(err) });
+}));
+
+app.use(passport.initialize())
+app.use(passport.session())
 
 const getUI = 
   () => async ctx => 

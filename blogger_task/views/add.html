@@ -1,26 +1,33 @@
+<!DOCTYPE html>
 <html lang="ru">
     <head>
         <meta charset="utf-8">
         <meta author="DanilD">
+        <link rel="stylesheet" type="text/css" href="/style.css">
+    </head>   
     <body>
-        <h1>Add Post</h1>
-        <form name="addform">
-            <input type="text" name="title" placeholder="Добавьте название" minlength="3" required><br>
-            <input type="text" name="categories" placeholder="Добавьте категории" minlength="3" required><br>
-            <textarea name="content" placeholder="Добавьте контент" required></textarea><br>
-            <button>Добавить</button>
-        </form>
-        <style type="text/css">
-        {
-
-        }
-        </style>
+        <nav>
+          <ul>
+            <li><a href="/posts">Посты</a></li>
+            <li><a href="/posts/new">Добавить пост</a></li>
+          </ul>
+        </nav>
+        <div>
+            <h1>Добавить пост</h1>
+            <form name="addform" class="form-post">
+                <input type="text" name="title" placeholder="Добавьте название" minlength="3" required><br>
+                <input type="text" name="categories" placeholder="Добавьте категории" minlength="3" required><br>
+                <textarea name="content" placeholder="Добавьте контент" required></textarea><br>
+                <button>Добавить</button>
+            </form>
+        </div>
+        
         <script type="text/javascript">
         {
             document.querySelector('form').addEventListener('submit', async e => {
                 e.preventDefault();
                 const form = e.target;
-                const ref = 'http://localhost:3000/api/posts';
+                const ref = '/api/posts';
                 const post = {
                     title: form.title.value,
                     categories: form.categories.value,
@@ -39,7 +46,7 @@
                     body: JSON.stringify(post), // тип данных в body должен соответвовать значен    ию заголовка "Content-Type"
                 } 
                 console.log(await fetch(ref, options).then(data => data.json()));
-                window.location.replace('http://localhost:3000/posts');
+                window.location.replace('/posts');
             });
 
         }

@@ -1,0 +1,101 @@
+body {
+  font-family: "Lucida Console", Monaco, monospace;
+  width: 100%;
+}
+
+nav {
+  margin: 1%;
+}
+nav ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid #e7e7e7;
+  background-color: #f3f3f3;
+}
+nav li {
+  float: left;
+}
+nav a {
+  display: block;
+  color: #666;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+nav li a:hover:not(.router-link-exact-active) {
+  background-color: #ddd;
+}
+
+nav a.router-link-exact-active {
+  color: white;
+  background-color: #4CAF50;
+}
+
+button {
+  background-color: #4caf50;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  width: 50%;
+}
+
+button:hover {
+  background-color: #6bbf6e;
+}
+
+button:focus {
+  background-color: #2d692f;
+}
+
+.form-post {
+  border-radius: 5px;
+  background-color: #f2f2f2;
+  padding: 20px;
+}
+
+form input[type=text] {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+form textarea {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  resize: none; 
+  height: 120px;
+}
+
+.home-post {
+  border-radius: 1px;
+  background-color: #f2f2f2;
+  padding: 2% 5%;
+  margin-bottom: 2%;
+}
+
+.home-post h3 {
+  border: 3px black;
+  text-align: center;
+}
+
+body > div {
+  margin: 5% 30%;
+}
