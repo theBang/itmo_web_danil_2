@@ -12,7 +12,8 @@ const { promises: { readFile } } = require('fs');
 
 const app = new Koa();
 const routerAPI = new Router({ prefix: '/api/posts' });
-const routerUI = new Router({ prefix: '/posts' });
+const routerUser = new Router({ prefix: '/user' });
+const routerUI = new Router();
 
 const postSchema = new mongoose.Schema({
   title: {
@@ -149,10 +150,36 @@ const getUI =
   () => async ctx => 
     ctx.body = await readFile(__dirname + '/dist/index.html', { encoding: 'utf-8' });
 
+function isAuthed (ctx, next) {
+  if (ctx.isAuthenticated()) return next();
+  else ctx.redirect('/');
+}
+
 routerUI
   .get('/', async ctx => ctx.body = await readFile(__dirname + '/views/index.html', { encoding: 'utf-8' }))
   .get('/new', async ctx => ctx.body = await readFile(__dirname + '/views/add.html', { encoding: 'utf-8' }))
-  .get('/:id', async ctx => ctx.body = await readFile(__dirname + '/views/show.html', { encoding: 'utf-8' }))
+  .get('/login', async ctx => ctx.body = await readFile(__dirname + '/views/login.html', { encoding: 'utf-8' }))
+  .post('/login', cors(), ctx => {
+    return passport.authenticate('local', (err, user, info, status) => {
+      if (user === false) {
+        ctx.body = { success: false };
+        ctx.throw(401);
+      } else {
+        ctx.body = { success: true };
+        return ctx.login(user)
+      }
+    })(ctx)
+  })
+  .get('/logout', async (ctx) => {
+    if (ctx.isAuthenticated()) {
+      ctx.logout();
+      ctx.redirect('/');
+    } else {
+      ctx.body = { success: false };
+      ctx.throw(401);
+    }
+  })
+  .get('/:id', isAuthed, async ctx => ctx.body = await readFile(__dirname + '/views/show.html', { encoding: 'utf-8' }))
 ;
 
 routerAPI
@@ -190,9 +217,18 @@ routerAPI
   })
 ;
 
+routerUser
+  .use(cors())
+  .post('/login', async (ctx, next) => {
+    passport.authenticate('local', {
+      successRedirect: '/',
+      failureRedirect: '/login'
+    })
+  })
+
 app
-  .use(routerUI.routes())
   .use(routerAPI.routes())
+  .use(routerUI.routes())
   .listen(config.PORT, () => console.log(`process: ${process.pid}`))
 ;
 

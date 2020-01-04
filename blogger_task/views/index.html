@@ -24,7 +24,7 @@
                 for (let post of posts) {
                     document.querySelector('#posts-wrapper').innerHTML += 
                         `<div class="home-post">
-                            <h3><a href='/posts/${post._id}'>${post.title}</a></h3>
+                            <h3><a href='/${post._id}'>${post.title}</a></h3>
                             <h4>${post.categories}</h4>
                             <p>${post.content}</p>
                         </div>`;

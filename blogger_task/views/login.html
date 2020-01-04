@@ -1,10 +1,9 @@
-<!DOCTYPE html>
 <html lang="ru">
     <head>
         <meta charset="utf-8">
         <meta author="DanilD">
         <link rel="stylesheet" type="text/css" href="/style.css">
-    </head>   
+    </head>
     <body>
         <nav>
           <ul>
@@ -13,25 +12,21 @@
           </ul>
         </nav>
         <div>
-            <h1>Добавить пост</h1>
-            <form name="addform" class="form-post">
-                <input type="text" name="title" placeholder="Добавьте название" minlength="3" required><br>
-                <input type="text" name="categories" placeholder="Добавьте категории" minlength="3" required><br>
-                <textarea name="content" placeholder="Добавьте контент" required></textarea><br>
-                <button>Добавить</button>
+            <h1>Зайти</h1>
+            <form name="edit-form" class="form-post">
+                <input type="text" name="username" placeholder="Login" minlength="3" required><br>
+                <input type="text" name="password" placeholder="Password" minlength="3" required><br>
+                <button id="login-btn">Зайти</button>
             </form>
         </div>
-        
         <script type="text/javascript">
-        {
-            document.querySelector('form').addEventListener('submit', async e => {
+        { 
+            const form = document.querySelector('form');
+            document.querySelector('#login-btn').addEventListener('click', async e => {
                 e.preventDefault();
-                const form = e.target;
-                const ref = '/api/posts';
                 const post = {
-                    title: form.title.value,
-                    categories: form.categories.value,
-                    content: form.content.value
+                    username: form.username.value,
+                    password: form.password.value
                 }
                 const options = {
                     method: 'POST', // *GET, POST, PUT, DELETE, etc.
@@ -45,10 +40,11 @@
                     referrer: 'no-referrer', // no-referrer, *client
                     body: JSON.stringify(post), // тип данных в body должен соответвовать значен    ию заголовка "Content-Type"
                 } 
-                console.log(await fetch(ref, options).then(data => data.json()));
-                window.location.replace('/');
+                await fetch('/login', options).then(data => {
+                    if(data.json().success) window.location.replace('/') 
+                    else alert('login went wrong') 
+                });
             });
-
         }
         </script>
     </body>
