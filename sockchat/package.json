@@ -1,0 +1,16 @@
+{
+  "name": "sockchat",
+  "version": "1.0.0",
+  "license": "MIT",
+  "scripts": {
+    "front": "cd frontend && npm run begin",
+    "back": "nodemon backend/index.js --watch backend/index.js",
+    "start": "npm-run-all --parallel front back"
+  },
+  "dependencies": {
+    "history": "^4.10.1",
+    "nodemon": "^2.0.1",
+    "npm-run-all": "^4.1.5",
+    "react-router-dom": "^5.1.2"
+  }
+}
